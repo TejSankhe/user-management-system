@@ -3,6 +3,8 @@ package com.cloud.usermanagement.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.cloud.usermanagement.helper.ValidationHelper;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,8 @@ import com.cloud.usermanagement.Exceptions.ValidationException;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.UserRepository;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserServiceTest {
-
-	@Autowired
-	private UserService userService;
 
 	//	@Autowired
 //	private UserRepository userRepository;
@@ -41,16 +39,9 @@ public class UserServiceTest {
 	@Test
 	public void createUserInvalidEmailAddress()
 	{
-		User user= new User();
-		user.setFirstName("Tej");
-		user.setLastName("Sankhe");
-		user.setEmailAddress("tejtest@gmail.com");
-		user.setPassword("Tejtest123");
-		try {
-			User userSaved= userService.save(user);
-		} catch (ValidationException e) {
-			assertEquals(e.getMessage(),"Password should be between 8 and 64 character and it should contain at least one lowercase, uppercase, number, and symbol");
-		}
+		ValidationHelper validationHelper= new ValidationHelper();
+		Assert.assertTrue(validationHelper.validatePassword("Sankhe@12345"));
+		Assert.assertFalse(validationHelper.validatePassword("5"));
 
 	}
 }

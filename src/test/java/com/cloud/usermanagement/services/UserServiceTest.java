@@ -34,6 +34,6 @@ public class UserServiceTest {
 		//assertNotNull(userRetrived);
 		//assertEquals("Username match", user.getEmailAddress(), (userRetrived).getEmailAddress());
 		//userRepository.delete((User) userRetrived);
-		assertEquals("a","a");
+		assertEquals("aa","aa");
 	}
 }

@@ -26,7 +26,7 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping()
-	public ResponseEntity<User> createUser(@Valid @RequestBody User user) throws ValidationException {
+	protected ResponseEntity<User> createUser(@Valid @RequestBody User user) throws ValidationException {
 		return new ResponseEntity<User>(userService.save(user), HttpStatus.CREATED);
 	}
 

@@ -37,7 +37,7 @@ public class UserServiceTest {
 //	}
 //
 	@Test
-	public void createUserInvalidEmailAddress()
+	public void createUserPasswordVali()
 	{
 		ValidationHelper validationHelper= new ValidationHelper();
 		Assert.assertTrue(validationHelper.validatePassword("Sankhe@12345"));

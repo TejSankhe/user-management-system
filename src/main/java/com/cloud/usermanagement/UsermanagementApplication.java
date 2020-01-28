@@ -33,9 +33,9 @@ public class UsermanagementApplication extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests()
-		.antMatchers(HttpMethod.POST).permitAll()
-		.antMatchers("user/self")
-		.authenticated().and().httpBasic().and().sessionManagement()
+		.antMatchers("/user").permitAll()
+		.anyRequest().authenticated()
+		.and().httpBasic().and().sessionManagement()
 		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 }

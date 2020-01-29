@@ -16,7 +16,7 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/your database name
 
 spring.datasource.username=your db user name
 spring.datasource.password=your db password
-`
+
 ## API doc
  [https://app.swaggerhub.com/apis-docs/csye6225/spring2020/assignment-03](https://app.swaggerhub.com/apis-docs/csye6225/spring2020/assignment-03)
  

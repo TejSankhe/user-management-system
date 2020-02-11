@@ -10,6 +10,7 @@ import com.cloud.usermanagement.Exceptions.FileStorageException;
 import com.cloud.usermanagement.Exceptions.ValidationException;
 import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.File;
+import com.cloud.usermanagement.repositories.BillRepository;
 import com.cloud.usermanagement.repositories.FileRepository;
 import com.cloud.usermanagement.utilities.FileStorageUtil;
 import com.cloud.usermanagement.utilities.ValidationHelper;
@@ -25,6 +26,9 @@ public class FileService {
 	private BillService billService;
 	
 	@Autowired
+	private BillRepository billRepository;
+	
+	@Autowired
 	private FileRepository fileRepository;
 	
 	@Autowired
@@ -34,6 +38,9 @@ public class FileService {
 		if(!validationHelper.validateAttachmentExtension(file.getOriginalFilename()))
 		{
 			throw new ValidationException("Only pdf, png, jpg and jpeg file formates are allowed");
+		}
+		if(bill.getAttachment()!=null) {
+			throw new ValidationException("attachment is already present for bill please delete it first");
 		}
 		String storedFilePath = fileStorageUtil.storeFile(file);
 		File attachment = new File();
@@ -49,16 +56,33 @@ public class FileService {
 
 	public File getAttachment(String fileId, String billId, String name) {
 		Bill bill = billService.getBill(billId, name);
-		if(bill!=null)
-			return bill.getAttachment();
+		if(bill!=null) {
+			File file= bill.getAttachment();
+			if(file!=null && file.getId().toString().compareTo(fileId)==0)
+			{
+				return file;
+			}
+		}
 		return null;
 	}
 
-	public Boolean deleteAttachment(String fileId, String billId, String name) throws FileStorageException {
+	public Boolean deleteAttachment(String fileId, String billId, String name) throws FileStorageException, ValidationException {
+		
 		Bill bill = billService.getBill(billId, name);
 		if(bill!=null) {
-			fileStorageUtil.deleteFile(bill.getAttachment().getUrl());
-			return true;
+			File file = bill.getAttachment();
+			if(file==null) {
+				throw new ValidationException("No attachment present to delete");
+			}
+			if(file.getId().toString().compareTo(fileId)==0)
+			{
+				fileStorageUtil.deleteFile(bill.getAttachment().getUrl());
+				bill.setAttachment(null);
+				billRepository.save(bill);
+				fileRepository.delete(file);
+				return true;
+			}
+		
 		}
 		return false;
 

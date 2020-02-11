@@ -68,7 +68,7 @@ public class FileController {
 	}
 	
 	@DeleteMapping("/{billId}/file/{fileId}")
-	protected ResponseEntity deleteAttachment(@PathVariable String billId, @PathVariable String fileId, Authentication authentication) throws FileStorageException {
+	protected ResponseEntity deleteAttachment(@PathVariable String billId, @PathVariable String fileId, Authentication authentication) throws FileStorageException, ValidationException {
 		if (authentication != null) {
 			Boolean status = fileService.deleteAttachment(fileId, billId, authentication.getName());
 			if (status)

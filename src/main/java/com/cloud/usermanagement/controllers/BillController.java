@@ -34,7 +34,7 @@ public class BillController {
 	private UserService userService;
 
 	@PostMapping("/bill")
-	protected ResponseEntity<Bill> createBill(@Valid @RequestBody Bill bill, Authentication authentication) {
+	protected ResponseEntity<Bill> createBill(@Valid @RequestBody Bill bill, Authentication authentication) throws ValidationException {
 		if (authentication != null) {
 			User user = userService.getUser(authentication.getName());
 			return new ResponseEntity<Bill>(billService.save(bill, user), HttpStatus.CREATED);
@@ -45,7 +45,7 @@ public class BillController {
 
 	@PutMapping("/bill/{id}")
 	protected ResponseEntity<Bill> updateBill(@PathVariable String id, @Valid @RequestBody Bill updatedBill,
-			Authentication authentication) {
+			Authentication authentication) throws ValidationException {
 		if (authentication != null) {
 			Bill bill = billService.updateBill(id, updatedBill, authentication.getName());
 			if (bill != null)

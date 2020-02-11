@@ -28,8 +28,10 @@ public class BillService {
 	@Autowired
 	private ValidationHelper validationHelper;
 
-	public Bill save(Bill bill, User user){
-
+	public Bill save(Bill bill, User user) throws ValidationException{
+		if(Double.compare(bill.getAmountDue(), 0.01)<0){
+			throw new ValidationException("amount_due should be atleast 0.01");
+		}
 		bill.setOwnerID(user.getId());
 		return billRepository.save(bill);
 
@@ -46,7 +48,10 @@ public class BillService {
 	}
 
 
-	public Bill updateBill(String id, Bill updatedBill, String name) {
+	public Bill updateBill(String id, Bill updatedBill, String name) throws ValidationException {
+		if(Double.compare(updatedBill.getAmountDue(), 0.01)<0){
+			throw new ValidationException("amount_due should be atleast 0.01");
+		}
 		User user= userRepository.findByEmailAddress(name.toLowerCase());
 		Bill searchedBill =  billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));
 		if(searchedBill!=null) {

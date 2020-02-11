@@ -44,7 +44,7 @@ public class File {
     private Date uploadDate;
 
 	@JsonIgnore
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY)
 	private Bill bill;
 	
 	@JsonIgnore

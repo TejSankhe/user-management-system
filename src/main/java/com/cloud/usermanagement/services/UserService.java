@@ -7,10 +7,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.cloud.usermanagement.Exceptions.ValidationException;
-import com.cloud.usermanagement.helper.PasswordEncryptHelper;
-import com.cloud.usermanagement.helper.ValidationHelper;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.UserRepository;
+import com.cloud.usermanagement.utilities.PasswordEncryptHelper;
+import com.cloud.usermanagement.utilities.ValidationHelper;
 
 @Service
 public class UserService {

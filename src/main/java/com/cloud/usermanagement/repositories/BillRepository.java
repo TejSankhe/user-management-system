@@ -13,4 +13,6 @@ public interface BillRepository extends CrudRepository<Bill, UUID> {
 
 	List<Bill> findByOwnerID(UUID ownerid);
 	Bill findByOwnerIDAndId(UUID ownerid, UUID id);
+	
+	
 }

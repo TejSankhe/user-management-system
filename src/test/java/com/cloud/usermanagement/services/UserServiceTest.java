@@ -3,7 +3,6 @@ package com.cloud.usermanagement.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.cloud.usermanagement.helper.ValidationHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.cloud.usermanagement.Exceptions.ValidationException;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.UserRepository;
+import com.cloud.usermanagement.utilities.ValidationHelper;
 
 @SpringBootTest
 public class UserServiceTest {

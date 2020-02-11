@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cloud.usermanagement.Exceptions.ValidationException;
-import com.cloud.usermanagement.helper.ValidationHelper;
 import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.BillRepository;
 import com.cloud.usermanagement.repositories.UserRepository;
+import com.cloud.usermanagement.utilities.ValidationHelper;
 
 @Service
 public class BillService {

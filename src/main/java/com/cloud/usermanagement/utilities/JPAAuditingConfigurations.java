@@ -1,4 +1,4 @@
-package com.cloud.usermanagement.helper;
+package com.cloud.usermanagement.utilities;
 
 import java.util.Optional;
 

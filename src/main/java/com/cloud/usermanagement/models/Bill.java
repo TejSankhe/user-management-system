@@ -4,13 +4,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -73,6 +76,10 @@ public class Bill {
     @JsonProperty(value = "paymentStatus")
     private PaymentStatus paymentStatus;
     
+    @JsonProperty(value = "attachment", access = JsonProperty.Access.READ_ONLY)
+    @OneToOne(mappedBy = "bill")
+    private File attachment;
+    
 	public UUID getId() {
 		return id;
 	}
@@ -134,10 +141,11 @@ public class Bill {
 	public void setPaymentStatus(PaymentStatus paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
-    
-    
-    
-    
-	
-
+	public File getAttachment() {
+		return attachment;
+	}
+	public void setAttachment(File attachment) {
+		this.attachment = attachment;
+	}
+ 
 }

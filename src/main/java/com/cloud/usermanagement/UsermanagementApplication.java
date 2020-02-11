@@ -3,6 +3,7 @@ package com.cloud.usermanagement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,11 +12,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+import com.cloud.usermanagement.properties.FileStorageProperties;
 import com.cloud.usermanagement.security.CustomAuthenticationProvider;
 
 @SpringBootApplication
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties({
+	FileStorageProperties.class
+})
 public class UsermanagementApplication extends WebSecurityConfigurerAdapter{
 
 	@Autowired

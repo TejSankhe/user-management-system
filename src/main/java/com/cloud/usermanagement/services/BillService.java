@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cloud.usermanagement.Exceptions.ValidationException;
-import com.cloud.usermanagement.helper.ValidationHelper;
 import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.BillRepository;
 import com.cloud.usermanagement.repositories.UserRepository;
+import com.cloud.usermanagement.utilities.ValidationHelper;
 
 @Service
 public class BillService {
@@ -28,8 +28,10 @@ public class BillService {
 	@Autowired
 	private ValidationHelper validationHelper;
 
-	public Bill save(Bill bill, User user){
-
+	public Bill save(Bill bill, User user) throws ValidationException{
+		if(Double.compare(bill.getAmountDue(), 0.01)<0){
+			throw new ValidationException("amount_due should be atleast 0.01");
+		}
 		bill.setOwnerID(user.getId());
 		return billRepository.save(bill);
 
@@ -46,7 +48,10 @@ public class BillService {
 	}
 
 
-	public Bill updateBill(String id, Bill updatedBill, String name) {
+	public Bill updateBill(String id, Bill updatedBill, String name) throws ValidationException {
+		if(Double.compare(updatedBill.getAmountDue(), 0.01)<0){
+			throw new ValidationException("amount_due should be atleast 0.01");
+		}
 		User user= userRepository.findByEmailAddress(name.toLowerCase());
 		Bill searchedBill =  billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));
 		if(searchedBill!=null) {

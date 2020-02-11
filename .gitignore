@@ -128,6 +128,7 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/intellij
 
+uploadedAttachements/
 target/
 pom.xml.tag
 pom.xml.releaseBackup

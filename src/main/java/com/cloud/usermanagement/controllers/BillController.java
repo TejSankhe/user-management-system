@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cloud.usermanagement.Exceptions.FileStorageException;
 import com.cloud.usermanagement.Exceptions.ValidationException;
 import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.User;
@@ -78,7 +79,7 @@ public class BillController {
 	}
 
 	@DeleteMapping("/bill/{id}")
-	protected ResponseEntity deleteBill(@PathVariable String id, Authentication authentication) {
+	protected ResponseEntity deleteBill(@PathVariable String id, Authentication authentication) throws FileStorageException, ValidationException {
 		if (authentication != null) {
 			Boolean status = billService.deleteBill(id, authentication.getName());
 			if (status)

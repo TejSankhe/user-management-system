@@ -1,5 +1,8 @@
 package com.cloud.usermanagement.controllers;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,7 @@ public class FileController {
 	
 	
 	@PostMapping("/{billId}/file")
-	protected ResponseEntity<File> createBill(@Valid @RequestParam("billAttachment") MultipartFile file, @PathVariable String billId, Authentication authentication) throws FileStorageException, ValidationException {
+	protected ResponseEntity<File> createBill(@Valid @RequestParam("billAttachment") MultipartFile file, @PathVariable String billId, Authentication authentication) throws FileStorageException, ValidationException, NoSuchAlgorithmException, IOException {
 		if (authentication != null) {
 			User user = userService.getUser(authentication.getName());
 			Bill bill = billService.getBill(billId, authentication.getName());

@@ -1,5 +1,8 @@
 package com.cloud.usermanagement.services;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.File;
 import com.cloud.usermanagement.repositories.BillRepository;
 import com.cloud.usermanagement.repositories.FileRepository;
+import com.cloud.usermanagement.utilities.CommonUtil;
 import com.cloud.usermanagement.utilities.FileStorageUtil;
 import com.cloud.usermanagement.utilities.ValidationHelper;
 
@@ -34,7 +38,10 @@ public class FileService {
 	@Autowired
 	private ValidationHelper validationHelper;
 	
-	public File save(@Valid MultipartFile file, Bill bill, String authorName) throws FileStorageException, ValidationException {
+	@Autowired
+	private CommonUtil commonUtil;
+	
+	public File save(@Valid MultipartFile file, Bill bill, String authorName) throws FileStorageException, ValidationException, NoSuchAlgorithmException, IOException {
 		if(!validationHelper.validateAttachmentExtension(file.getOriginalFilename()))
 		{
 			throw new ValidationException("Only pdf, png, jpg and jpeg file formates are allowed");
@@ -50,6 +57,7 @@ public class FileService {
 		attachment.setContentType(file.getContentType());
 		attachment.setSize(file.getSize());
 		attachment.setOwner(authorName);
+		attachment.setHash(commonUtil.computeMD5Hash(file.getBytes()));
 		fileRepository.save(attachment);
 		return attachment;
 	}

@@ -7,6 +7,10 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -22,30 +26,31 @@ import com.cloud.usermanagement.Exceptions.FileStorageException;
 public class AmazonClient {
 	private AmazonS3 s3client;
 
-	@Value("${amazonProperties.endpointUrl}")
-	private String endpointUrl;
+//	@Value("${amazonProperties.endpointUrl}")
+//	private String endpointUrl;
 
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
 
-	@Value("${amazonProperties.clientRegion}")
-	private String clientRegion;
+//	@Value("${amazonProperties.clientRegion}")
+//	private String clientRegion;
 
 	@PostConstruct
 	private void initializeAmazon() {
 
-		this.s3client = AmazonS3ClientBuilder.standard().withCredentials(new InstanceProfileCredentialsProvider(false))
-				.build();
+//		this.s3client = AmazonS3ClientBuilder.standard().withCredentials(new InstanceProfileCredentialsProvider(false))
+//				.build();
+		this.s3client = new AmazonS3Client();
 
 	}
 
-	private File convertMultiPartToFile(MultipartFile file) throws IOException {
-		File convFile = new File(file.getOriginalFilename());
-		FileOutputStream fos = new FileOutputStream(convFile);
-		fos.write(file.getBytes());
-		fos.close();
-		return convFile;
-	}
+//	private File convertMultiPartToFile(MultipartFile file) throws IOException {
+//		File convFile = new File(file.getOriginalFilename());
+//		FileOutputStream fos = new FileOutputStream(convFile);
+//		fos.write(file.getBytes());
+//		fos.close();
+//		return convFile;
+//	}
 
 	private String generateFileName(MultipartFile multiPart) {
 
@@ -64,19 +69,24 @@ public class AmazonClient {
 
 	public String uploadFile(MultipartFile multipartFile) throws FileStorageException {
 
+
+
 		String fileUrl = "";
 
 		File file = null;
 		String fileName = null;
 		try {
-			file = convertMultiPartToFile(multipartFile);
+			ObjectMetadata objectMeatadata = new ObjectMetadata();
+			objectMeatadata.setContentType(multipartFile.getContentType());
+//			file = convertMultiPartToFile(multipartFile);
 
 			fileName = generateFileName(multipartFile);
-			fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-			uploadFileTos3bucket(fileName, file);
-
+			fileUrl = "https://" + bucketName + ".s3.amazonaws.com" + "/" + fileName;
+			s3client.putObject(new PutObjectRequest(bucketName, fileName, multipartFile.getInputStream(), objectMeatadata));
+			//uploadFileTos3bucket(fileName, file);
 		} catch (Exception e) {
-			throw new FileStorageException("File not stored in S3 bucket. File name: " + fileName);
+
+			throw new FileStorageException("File not stored in S3 bucket. File name: " + fileName+""+e);
 		} finally {
 			if (file != null) {
 				file.delete();
@@ -90,8 +100,11 @@ public class AmazonClient {
 	public void deleteFileFromS3Bucket(String fileUrl) throws FileStorageException {
 		String fileName = null;
 		try {
+
 			fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-			s3client.deleteObject(bucketName, fileName);
+			s3client.deleteObject(
+					new DeleteObjectRequest(bucketName, fileName));
+			//s3client.deleteObject(bucketName, fileName);
 		} catch (Exception e) {
 			throw new FileStorageException("File not stored in S3 bucket. File name: " + fileName);
 		}

@@ -18,6 +18,7 @@ import com.cloud.usermanagement.utilities.FileStorageUtil;
 
 @Component
 @Scope(value = "singleton")
+@Profile("default")
 public class DefaultFileStorageUtil implements FileStorageUtil {
 
 	private final Path fileStorageLocation;

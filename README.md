@@ -18,6 +18,11 @@ spring.datasource.username=your db user name
 spring.datasource.password=your db password
 
 Run as spring boot project
-## API doc
- [https://app.swaggerhub.com/apis-docs/csye6225/spring2020/assignment-03](https://app.swaggerhub.com/apis-docs/csye6225/spring2020/assignment-03)
+ 
+profiles
+- dev: aws cloud
+- default: local server
+
+
+### [API doc](https://app.swaggerhub.com/apis-docs/csye6225/spring2020/assignment-04)
  

@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/centos/webapp/
+
+hooks:
+  AfterInstall:
+    - location: ./afterInstall.sh
+      timeout: 120
+      runas: centos

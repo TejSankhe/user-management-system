@@ -3,10 +3,10 @@ os: linux
 
 files:
   - source: /
-    destination: /home/centos/webapp/
+    destination: /home/ubuntu/webapp/
 
 hooks:
   AfterInstall:
     - location: ./afterInstall.sh
-      timeout: 120
-      runas: centos
+      timeout: 180
+      runas: ubuntu

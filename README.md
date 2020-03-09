@@ -11,7 +11,7 @@ IntelliJ - IDE used to develop the web app
 
 ## Build Instructions
 Make the below changes in application.properties file
-`
+
 spring.datasource.url=jdbc:postgresql://localhost:5432/your database name
 
 spring.datasource.username=your db user name

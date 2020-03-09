@@ -89,6 +89,7 @@ jobs: # a collection of steps
       - run:
           name: Make CodeDeploy API call
           command: |
+            aws configure set region ${AWS_REGION}
             echo "Calling CodeDeploy Agent to pick the artifact and deploy on EC2 instance"
             aws deploy create-deployment --application-name "csye6225-webapp" --deployment-group-name "csye6225-webapp-deployment" --s3-location bucket=${CODE_DEPLOY_S3_BUCKET},bundleType=zip,key=csye6255-webapp-${CIRCLE_BUILD_NUM}.zip
 

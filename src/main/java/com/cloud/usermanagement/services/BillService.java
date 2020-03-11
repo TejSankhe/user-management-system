@@ -76,6 +76,7 @@ public class BillService {
 		User user= userRepository.findByEmailAddress(name.toLowerCase());
 		Bill bill = billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));
 		if(bill!=null) {
+			if(bill.getAttachment()!=null)
 			fileService.deleteAttachment(bill.getAttachment().getId().toString(), id, name);
 			billRepository.delete(bill);
 			return true;

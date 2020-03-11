@@ -19,6 +19,7 @@ spring.datasource.password=your db password
 
 Run as spring boot project
 
+
 profiles
 - dev: aws cloud
 - default: local server

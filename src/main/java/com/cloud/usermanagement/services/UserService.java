@@ -13,6 +13,7 @@ import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.UserRepository;
 import com.cloud.usermanagement.utilities.PasswordEncryptHelper;
 import com.cloud.usermanagement.utilities.ValidationHelper;
+import com.timgroup.statsd.StatsDClient;
 
 @Service
 public class UserService {
@@ -28,6 +29,9 @@ public class UserService {
 	
 	private static final Logger logger = LogManager.getLogger(UserService.class);
 	
+	@Autowired
+	private StatsDClient statsDClient;
+	
 	public User save(User user) throws ValidationException {
 		
 		User searcheduser= userRepository.findByEmailAddress(user.getEmailAddress().toLowerCase());
@@ -39,7 +43,10 @@ public class UserService {
 			}
 			user.setEmailAddress(user.getEmailAddress().toLowerCase());
 			user.setPassword(passwordEncryptHelper.encryptPassword(user.getPassword()));
+			long startTime= System.currentTimeMillis();
 			userRepository.save(user);
+			long endTime= System.currentTimeMillis();
+			statsDClient.recordExecutionTime("saveuserquery", endTime-startTime);
 		}
 		else {
 			throw new ValidationException("User already exists");
@@ -66,7 +73,10 @@ public class UserService {
 			searchedUser.setFirstName(user.getFirstName());
 			searchedUser.setLastName(user.getLastName());
 			logger.info("user updated successful."+searchedUser);
+			long startTime= System.currentTimeMillis();
 			userRepository.save(searchedUser);
+			long endTime= System.currentTimeMillis();
+			statsDClient.recordExecutionTime("updateuserquery", endTime-startTime);
 		}
 		else
 		{
@@ -86,7 +96,10 @@ public class UserService {
 
 
 	public User getUser(String emailAddress) {
+		long startTime= System.currentTimeMillis();
 		User searcheduser= userRepository.findByEmailAddress(emailAddress.toLowerCase());
+		long endTime= System.currentTimeMillis();
+		statsDClient.recordExecutionTime("getuserquery", endTime-startTime);
 		if(searcheduser != null)
 		{
 			logger.info("get user"+ searcheduser);

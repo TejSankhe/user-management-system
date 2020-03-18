@@ -19,6 +19,7 @@ import com.cloud.usermanagement.repositories.BillRepository;
 import com.cloud.usermanagement.repositories.FileRepository;
 import com.cloud.usermanagement.repositories.UserRepository;
 import com.cloud.usermanagement.utilities.ValidationHelper;
+import com.timgroup.statsd.StatsDClient;
 
 @Service
 public class BillService {
@@ -35,6 +36,10 @@ public class BillService {
 	@Autowired
 	private FileService fileService;
 	
+	@Autowired
+	private StatsDClient statsDClient;
+	
+	
 	private static final Logger logger = LogManager.getLogger(BillService.class);
 	
 	public Bill save(Bill bill, User user) throws ValidationException{
@@ -48,15 +53,21 @@ public class BillService {
 	}
 
 	public List<Bill> getBills(String emailAddress) {
+		long startTime= System.currentTimeMillis();
 		User user= userRepository.findByEmailAddress(emailAddress.toLowerCase());
 		List<Bill> bills = billRepository.findByOwnerID(user.getId());
+		long endTime= System.currentTimeMillis();
+		statsDClient.recordExecutionTime("getbillsquery", endTime-startTime);
 		logger.info("Bills");
 		return bills;
 	}
 
 	public Bill getBill(String id, String name) {
+		long startTime= System.currentTimeMillis();
 		User user= userRepository.findByEmailAddress(name.toLowerCase());
 		Bill bill = billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));
+		long endTime= System.currentTimeMillis();
+		statsDClient.recordExecutionTime("getbillsquery", endTime-startTime);
 		logger.info("Bill");
 		return bill;	
 	}
@@ -89,7 +100,10 @@ public class BillService {
 		if(bill!=null) {
 			if(bill.getAttachment()!=null)
 			fileService.deleteAttachment(bill.getAttachment().getId().toString(), id, name);
+			long startTime= System.currentTimeMillis();
 			billRepository.delete(bill);
+			long endTime= System.currentTimeMillis();
+			statsDClient.recordExecutionTime("deletebillquery", endTime-startTime);
 			logger.info("bill deleted");
 			return true;
 		}

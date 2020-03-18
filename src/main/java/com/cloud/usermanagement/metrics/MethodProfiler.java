@@ -25,7 +25,7 @@ public class MethodProfiler {
 		this.statsDClient = statsDClient;
 	}
 
-	@Pointcut("execution(* com.usermanagement.controllers..*(..))")
+	@Pointcut("execution(* com.cloud.usermanagement.controllers..*(..))")
 	public void restServiceMethods() {
 	}
 

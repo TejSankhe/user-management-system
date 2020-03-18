@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import com.cloud.usermanagement.repositories.FileRepository;
 import com.cloud.usermanagement.utilities.CommonUtil;
 import com.cloud.usermanagement.utilities.FileStorageUtil;
 import com.cloud.usermanagement.utilities.ValidationHelper;
+import com.timgroup.statsd.StatsDClient;
 
 
 @Service
@@ -41,6 +44,11 @@ public class FileService {
 	@Autowired
 	private CommonUtil commonUtil;
 	
+	@Autowired
+	private StatsDClient statsDClient;
+	
+	private static final Logger logger = LogManager.getLogger(FileService.class);
+	
 	public File save(@Valid MultipartFile file, Bill bill, String authorName) throws FileStorageException, ValidationException, NoSuchAlgorithmException, IOException {
 		if(!validationHelper.validateAttachmentExtension(file.getOriginalFilename()))
 		{
@@ -58,7 +66,11 @@ public class FileService {
 		attachment.setSize(file.getSize());
 		attachment.setOwner(authorName);
 		attachment.setHash(commonUtil.computeMD5Hash(file.getBytes()));
+		long startTime= System.currentTimeMillis();
 		fileRepository.save(attachment);
+		long endTime= System.currentTimeMillis();
+		statsDClient.recordExecutionTime("addFileS3", endTime-startTime);
+		logger.info("file saved successfully");
 		return attachment;
 	}
 
@@ -68,9 +80,11 @@ public class FileService {
 			File file= bill.getAttachment();
 			if(file!=null && file.getId().toString().compareTo(fileId)==0)
 			{
+				logger.info("get file");
 				return file;
 			}
 		}
+		logger.info("no file found");
 		return null;
 	}
 
@@ -84,10 +98,17 @@ public class FileService {
 			}
 			if(file.getId().toString().compareTo(fileId)==0)
 			{
+				long startTime1= System.currentTimeMillis();
 				fileStorageUtil.deleteFile(bill.getAttachment().getUrl());
+				long endTime1= System.currentTimeMillis();
+				statsDClient.recordExecutionTime("deletefile", endTime1-startTime1);
 				bill.setAttachment(null);
+				long startTime= System.currentTimeMillis();
 				billRepository.save(bill);
+				long endTime= System.currentTimeMillis();
+				statsDClient.recordExecutionTime("savebillquery", endTime-startTime);
 				fileRepository.delete(file);
+				logger.info("file deleted successfully");
 				return true;
 			}
 		

@@ -2,6 +2,8 @@ package com.cloud.usermanagement.security;
 
 import java.util.Collections;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +20,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private UserService userService;
 	
+	private static final Logger logger = LogManager.getLogger(CustomAuthenticationProvider.class);
+	
 	@Override
     public Authentication authenticate(Authentication authentication) 
       throws AuthenticationException {
@@ -26,9 +30,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
          
         if (userService.authenticateUser(name,password)) {
+        	logger.debug("authenticated="+"name:"+name);
             return new UsernamePasswordAuthenticationToken(
               name, password,Collections.emptyList());
         } else {
+        	logger.error("Wrong credentials="+"name:"+name);
         	throw new BadCredentialsException("Wrong credentials");
         }
     }

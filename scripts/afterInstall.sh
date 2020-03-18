@@ -3,7 +3,7 @@
 echo "Entered after install hook"
 cd /home/ubuntu/webapp
 sudo chown -R ubuntu:ubuntu /home/ubuntu/webapp/*
-sudo chmod +x demo-0.0.1-SNAPSHOT.jar
+sudo chmod 777 demo-0.0.1-SNAPSHOT.jar
 
 #Killing the application
 kill -9 $(ps -ef|grep demo-0.0.1 | grep -v grep | awk '{print $2}')

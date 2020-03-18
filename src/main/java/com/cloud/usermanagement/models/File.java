@@ -130,5 +130,12 @@ public class File {
 	public void setHash(String hash) {
 		this.hash = hash;
 	}
+
+	@Override
+	public String toString() {
+		return "File [id=" + id + ", fileName=" + fileName + ", url=" + url + ", uploadDate=" + uploadDate + ", bill="
+				+ bill + ", size=" + size + ", owner=" + owner + ", contentType=" + contentType + "]";
+	}
+	
 	
 }

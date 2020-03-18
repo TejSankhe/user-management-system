@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.internal.compiler.env.IUpdatableModule.UpdateKind;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,23 +35,30 @@ public class BillService {
 	@Autowired
 	private FileService fileService;
 	
+	private static final Logger logger = LogManager.getLogger(BillService.class);
+	
 	public Bill save(Bill bill, User user) throws ValidationException{
 		if(Double.compare(bill.getAmountDue(), 0.01)<0){
 			throw new ValidationException("amount_due should be atleast 0.01");
 		}
 		bill.setOwnerID(user.getId());
+		logger.info("Bill saved successfully ="+ bill);
 		return billRepository.save(bill);
 
 	}
 
 	public List<Bill> getBills(String emailAddress) {
 		User user= userRepository.findByEmailAddress(emailAddress.toLowerCase());
-		return billRepository.findByOwnerID(user.getId());
+		List<Bill> bills = billRepository.findByOwnerID(user.getId());
+		logger.info("Bills ="+ bills.toArray());
+		return bills;
 	}
 
 	public Bill getBill(String id, String name) {
 		User user= userRepository.findByEmailAddress(name.toLowerCase());
-		return billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));	
+		Bill bill = billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));
+		logger.info("Bill ="+ bill);
+		return bill;	
 	}
 
 
@@ -66,9 +75,11 @@ public class BillService {
 			searchedBill.setAmountDue(updatedBill.getAmountDue());
 			searchedBill.setCategories(updatedBill.getCategories());
 			searchedBill.setPaymentStatus(updatedBill.getPaymentStatus());
+			logger.info("bill updated"+ searchedBill);
 			return billRepository.save(searchedBill);
 			
 		}
+		logger.info("bill not found");
 		return null;	
 	}
 	
@@ -79,8 +90,10 @@ public class BillService {
 			if(bill.getAttachment()!=null)
 			fileService.deleteAttachment(bill.getAttachment().getId().toString(), id, name);
 			billRepository.delete(bill);
+			logger.info("bill deleted="+bill);
 			return true;
 		}
+		logger.info("bill not found");
 		return false;
 	}
 

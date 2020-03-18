@@ -2,6 +2,8 @@ package com.cloud.usermanagement.services;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class UserService {
 	@Autowired
 	private PasswordEncryptHelper passwordEncryptHelper;
 	
+	private static final Logger logger = LogManager.getLogger(UserService.class);
 	
 	public User save(User user) throws ValidationException {
 		
@@ -41,6 +44,7 @@ public class UserService {
 		else {
 			throw new ValidationException("User already exists");
 		}
+		logger.info("user saved successful."+user);
 		return user;
 	}
 
@@ -61,6 +65,7 @@ public class UserService {
 			searchedUser.setPassword(encryptedPasword);
 			searchedUser.setFirstName(user.getFirstName());
 			searchedUser.setLastName(user.getLastName());
+			logger.info("user updated successful."+searchedUser);
 			userRepository.save(searchedUser);
 		}
 		else
@@ -84,8 +89,10 @@ public class UserService {
 		User searcheduser= userRepository.findByEmailAddress(emailAddress.toLowerCase());
 		if(searcheduser != null)
 		{
+			logger.info("get user"+ searcheduser);
 			return searcheduser;
 		}
+		logger.info("user not found");
 		return null;
 		
 	}

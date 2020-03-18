@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,7 @@ import com.cloud.usermanagement.utilities.FileStorageUtil;
 public class DefaultFileStorageUtil implements FileStorageUtil {
 
 	private final Path fileStorageLocation;
+	private static final Logger logger = LogManager.getLogger(DefaultFileStorageUtil.class);
 
 	public DefaultFileStorageUtil(FileStorageProperties fileStorageProperties) throws FileStorageException {
 		this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir()).toAbsolutePath().normalize();
@@ -29,6 +32,7 @@ public class DefaultFileStorageUtil implements FileStorageUtil {
 		try {
 			Files.createDirectories(this.fileStorageLocation);
 		} catch (Exception ex) {
+			logger.error(ex.getMessage());
 			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
 					ex);
 		}

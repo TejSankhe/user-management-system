@@ -11,6 +11,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.cloud.usermanagement.Exceptions.FileStorageException;
+import com.cloud.usermanagement.Exceptions.ValidationException;
 
 @Service
 @Profile("dev")
@@ -34,7 +38,9 @@ public class AmazonClient {
 
 //	@Value("${amazonProperties.clientRegion}")
 //	private String clientRegion;
-
+	
+	private static final Logger logger = LogManager.getLogger(AmazonClient.class);
+	
 	@PostConstruct
 	private void initializeAmazon() {
 

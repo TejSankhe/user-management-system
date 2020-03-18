@@ -147,5 +147,14 @@ public class Bill {
 	public void setAttachment(File attachment) {
 		this.attachment = attachment;
 	}
+	@Override
+	public String toString() {
+		return "Bill [id=" + id + ", createdTS=" + createdTS + ", updatedTS=" + updatedTS + ", ownerID=" + ownerID
+				+ ", vendor=" + vendor + ", billDate=" + billDate + ", dueDate=" + dueDate + ", amountDue=" + amountDue
+				+ ", categories=" + categories + ", paymentStatus=" + paymentStatus + ", attachment=" + attachment
+				+ "]";
+	}
+	
+	
  
 }

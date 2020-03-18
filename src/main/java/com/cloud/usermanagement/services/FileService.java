@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +43,8 @@ public class FileService {
 	@Autowired
 	private CommonUtil commonUtil;
 	
+	private static final Logger logger = LogManager.getLogger(FileService.class);
+	
 	public File save(@Valid MultipartFile file, Bill bill, String authorName) throws FileStorageException, ValidationException, NoSuchAlgorithmException, IOException {
 		if(!validationHelper.validateAttachmentExtension(file.getOriginalFilename()))
 		{
@@ -59,6 +63,7 @@ public class FileService {
 		attachment.setOwner(authorName);
 		attachment.setHash(commonUtil.computeMD5Hash(file.getBytes()));
 		fileRepository.save(attachment);
+		logger.info("file saved successfully ="+ attachment);
 		return attachment;
 	}
 
@@ -68,9 +73,11 @@ public class FileService {
 			File file= bill.getAttachment();
 			if(file!=null && file.getId().toString().compareTo(fileId)==0)
 			{
+				logger.info("get file ="+ file);
 				return file;
 			}
 		}
+		logger.info("no file found");
 		return null;
 	}
 
@@ -88,6 +95,7 @@ public class FileService {
 				bill.setAttachment(null);
 				billRepository.save(bill);
 				fileRepository.delete(file);
+				logger.info("file deleted successfully" + file);
 				return true;
 			}
 		

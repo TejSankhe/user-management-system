@@ -17,6 +17,7 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/your database name
 spring.datasource.username=your db user name
 spring.datasource.password=your db password
 
+
 Run as spring boot project
 
 profiles

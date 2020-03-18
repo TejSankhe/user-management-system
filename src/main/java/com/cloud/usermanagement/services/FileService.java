@@ -63,7 +63,7 @@ public class FileService {
 		attachment.setOwner(authorName);
 		attachment.setHash(commonUtil.computeMD5Hash(file.getBytes()));
 		fileRepository.save(attachment);
-		logger.info("file saved successfully ="+ attachment);
+		logger.info("file saved successfully");
 		return attachment;
 	}
 
@@ -73,7 +73,7 @@ public class FileService {
 			File file= bill.getAttachment();
 			if(file!=null && file.getId().toString().compareTo(fileId)==0)
 			{
-				logger.info("get file ="+ file);
+				logger.info("get file");
 				return file;
 			}
 		}
@@ -95,7 +95,7 @@ public class FileService {
 				bill.setAttachment(null);
 				billRepository.save(bill);
 				fileRepository.delete(file);
-				logger.info("file deleted successfully" + file);
+				logger.info("file deleted successfully");
 				return true;
 			}
 		

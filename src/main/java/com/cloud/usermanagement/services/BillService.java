@@ -42,7 +42,7 @@ public class BillService {
 			throw new ValidationException("amount_due should be atleast 0.01");
 		}
 		bill.setOwnerID(user.getId());
-		logger.info("Bill saved successfully ="+ bill);
+		logger.info("Bill saved successfully");
 		return billRepository.save(bill);
 
 	}
@@ -50,14 +50,14 @@ public class BillService {
 	public List<Bill> getBills(String emailAddress) {
 		User user= userRepository.findByEmailAddress(emailAddress.toLowerCase());
 		List<Bill> bills = billRepository.findByOwnerID(user.getId());
-		logger.info("Bills ="+ bills.toArray());
+		logger.info("Bills");
 		return bills;
 	}
 
 	public Bill getBill(String id, String name) {
 		User user= userRepository.findByEmailAddress(name.toLowerCase());
 		Bill bill = billRepository.findByOwnerIDAndId(user.getId(), UUID.fromString(id));
-		logger.info("Bill ="+ bill);
+		logger.info("Bill");
 		return bill;	
 	}
 
@@ -75,7 +75,7 @@ public class BillService {
 			searchedBill.setAmountDue(updatedBill.getAmountDue());
 			searchedBill.setCategories(updatedBill.getCategories());
 			searchedBill.setPaymentStatus(updatedBill.getPaymentStatus());
-			logger.info("bill updated"+ searchedBill);
+			logger.info("bill updated");
 			return billRepository.save(searchedBill);
 			
 		}
@@ -90,7 +90,7 @@ public class BillService {
 			if(bill.getAttachment()!=null)
 			fileService.deleteAttachment(bill.getAttachment().getId().toString(), id, name);
 			billRepository.delete(bill);
-			logger.info("bill deleted="+bill);
+			logger.info("bill deleted");
 			return true;
 		}
 		logger.info("bill not found");

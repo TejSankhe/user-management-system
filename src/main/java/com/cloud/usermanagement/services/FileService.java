@@ -98,7 +98,10 @@ public class FileService {
 			}
 			if(file.getId().toString().compareTo(fileId)==0)
 			{
+				long startTime1= System.currentTimeMillis();
 				fileStorageUtil.deleteFile(bill.getAttachment().getUrl());
+				long endTime1= System.currentTimeMillis();
+				statsDClient.recordExecutionTime("deletefile", endTime1-startTime1);
 				bill.setAttachment(null);
 				long startTime= System.currentTimeMillis();
 				billRepository.save(bill);

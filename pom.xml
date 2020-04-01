@@ -122,7 +122,15 @@
 			<artifactId>guava</artifactId>
 			<version>27.1-jre</version>
 		</dependency>
-
+		<!-- sns ans sqs -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-sqs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-sns</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

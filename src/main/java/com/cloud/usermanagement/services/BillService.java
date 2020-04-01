@@ -12,10 +12,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.internal.compiler.env.IUpdatableModule.UpdateKind;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloud.usermanagement.Exceptions.FileStorageException;
 import com.cloud.usermanagement.Exceptions.ValidationException;
+import com.cloud.usermanagement.aws.AmazonSQSClient;
 import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.BillRepository;
@@ -42,6 +44,11 @@ public class BillService {
 	@Autowired
 	private StatsDClient statsDClient;
 	
+	@Autowired
+	private AmazonSQSClient amazonSQSClient;
+	
+	@Value("${spring.profiles.active}")
+	private String activeProfile;
 	
 	private static final Logger logger = LogManager.getLogger(BillService.class);
 	
@@ -133,6 +140,7 @@ public class BillService {
 		}
 		statsDClient.recordExecutionTime("getbillsdueDateQuery", endTime-startTime);
 		logger.info("get due Bills");
+		amazonSQSClient.sendMessage("Hello world");
 		return result;
 	}
 

@@ -140,7 +140,8 @@ public class BillService {
 		}
 		statsDClient.recordExecutionTime("getbillsdueDateQuery", endTime-startTime);
 		logger.info("get due Bills");
-		amazonSQSClient.sendMessage("Hello world");
+		amazonSQSClient.sendMessage("tejsankhe03@gmail.com");
+		amazonSQSClient.pollMessage();
 		return result;
 	}
 

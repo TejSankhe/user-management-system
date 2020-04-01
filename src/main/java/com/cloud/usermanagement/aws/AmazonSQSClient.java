@@ -18,7 +18,7 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 @Service
 @Profile("dev")
 public class AmazonSQSClient {
-	final String QUEUE_NAME = "mySQSQueue.fifo";
+	final String QUEUE_NAME = "mySQSQueue";
     final AmazonSQS sqs =  AmazonSQSClientBuilder.defaultClient();
     final String queueUrl = sqs.getQueueUrl(QUEUE_NAME).getQueueUrl();
     

@@ -78,6 +78,18 @@ public class BillController {
 			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}
 
+	@GetMapping("/bills/due/{x}")
+	protected ResponseEntity<List<Bill>> getDueBills(@PathVariable String x, Authentication authentication) {
+		if (authentication != null) {
+			List<Bill> bills = billService.getDueBills(x, authentication.getName());
+			if (bills != null)
+				return new ResponseEntity<List<Bill>>(bills, HttpStatus.OK);
+			else
+				return new ResponseEntity(HttpStatus.NOT_FOUND);
+		} else
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+	}
+	
 	@DeleteMapping("/bill/{id}")
 	protected ResponseEntity deleteBill(@PathVariable String id, Authentication authentication) throws FileStorageException, ValidationException {
 		if (authentication != null) {

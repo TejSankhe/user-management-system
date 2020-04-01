@@ -1,18 +1,23 @@
 package com.cloud.usermanagement.services;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
-
+import java.time.LocalDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.internal.compiler.env.IUpdatableModule.UpdateKind;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloud.usermanagement.Exceptions.FileStorageException;
 import com.cloud.usermanagement.Exceptions.ValidationException;
+import com.cloud.usermanagement.aws.AmazonSQSClient;
 import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.BillRepository;
@@ -39,6 +44,11 @@ public class BillService {
 	@Autowired
 	private StatsDClient statsDClient;
 	
+	@Autowired
+	private AmazonSQSClient amazonSQSClient;
+	
+	@Value("${spring.profiles.active}")
+	private String activeProfile;
 	
 	private static final Logger logger = LogManager.getLogger(BillService.class);
 	
@@ -109,6 +119,29 @@ public class BillService {
 		}
 		logger.info("bill not found");
 		return false;
+	}
+
+	public List<Bill> getDueBills(String x, String name) {
+		long startTime= System.currentTimeMillis();
+		User user= userRepository.findByEmailAddress(name.toLowerCase());
+		List<Bill> bills = billRepository.findByOwnerID(user.getId());
+		List<Bill> result = new ArrayList<>();
+        Date today = new Date();
+        System.out.println("date : " + today);     
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DATE, Integer.parseInt(x));
+        Date dueDate = cal.getTime();
+        System.out.println("duedate : " + dueDate);
+		long endTime= System.currentTimeMillis();
+		for(Bill bill : bills) {
+			if(today.compareTo(bill.getDueDate())<=0 && bill.getDueDate().compareTo(dueDate)<=0)
+				result.add(bill);
+		}
+		statsDClient.recordExecutionTime("getbillsdueDateQuery", endTime-startTime);
+		logger.info("get due Bills");
+		amazonSQSClient.sendMessage("Hello world");
+		return result;
 	}
 
 

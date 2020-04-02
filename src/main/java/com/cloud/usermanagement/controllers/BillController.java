@@ -24,6 +24,7 @@ import com.cloud.usermanagement.models.Bill;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.services.BillService;
 import com.cloud.usermanagement.services.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RestController
 public class BillController {
@@ -79,13 +80,10 @@ public class BillController {
 	}
 
 	@GetMapping("/bills/due/{x}")
-	protected ResponseEntity<List<Bill>> getDueBills(@PathVariable String x, Authentication authentication) {
+	protected ResponseEntity getDueBills(@PathVariable String x, Authentication authentication) throws JsonProcessingException {
 		if (authentication != null) {
-			List<Bill> bills = billService.getDueBills(x, authentication.getName());
-			if (bills != null)
-				return new ResponseEntity<List<Bill>>(bills, HttpStatus.OK);
-			else
-				return new ResponseEntity(HttpStatus.NOT_FOUND);
+			billService.getDueBills(x, authentication.getName());
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else
 			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}

@@ -19,11 +19,14 @@ import com.cloud.usermanagement.Exceptions.FileStorageException;
 import com.cloud.usermanagement.Exceptions.ValidationException;
 import com.cloud.usermanagement.aws.AmazonSQSClient;
 import com.cloud.usermanagement.models.Bill;
+import com.cloud.usermanagement.models.MessageDueDays;
 import com.cloud.usermanagement.models.User;
 import com.cloud.usermanagement.repositories.BillRepository;
 import com.cloud.usermanagement.repositories.FileRepository;
 import com.cloud.usermanagement.repositories.UserRepository;
 import com.cloud.usermanagement.utilities.ValidationHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timgroup.statsd.StatsDClient;
 
 @Service
@@ -49,6 +52,9 @@ public class BillService {
 	
 	@Value("${spring.profiles.active}")
 	private String activeProfile;
+	
+	@Autowired
+    private ObjectMapper mapper;
 	
 	private static final Logger logger = LogManager.getLogger(BillService.class);
 	
@@ -121,29 +127,11 @@ public class BillService {
 		return false;
 	}
 
-	public List<Bill> getDueBills(String x, String name) {
-		long startTime= System.currentTimeMillis();
-		User user= userRepository.findByEmailAddress(name.toLowerCase());
-		List<Bill> bills = billRepository.findByOwnerID(user.getId());
-		List<Bill> result = new ArrayList<>();
-        Date today = new Date();
-        System.out.println("date : " + today);     
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(today);
-        cal.add(Calendar.DATE, Integer.parseInt(x));
-        Date dueDate = cal.getTime();
-        System.out.println("duedate : " + dueDate);
-		long endTime= System.currentTimeMillis();
-		for(Bill bill : bills) {
-			if(today.compareTo(bill.getDueDate())<=0 && bill.getDueDate().compareTo(dueDate)<=0)
-				result.add(bill);
-		}
-		statsDClient.recordExecutionTime("getbillsdueDateQuery", endTime-startTime);
-		logger.info("get due Bills");
-		amazonSQSClient.sendMessage("tejsankhe03@gmail.com");
-		amazonSQSClient.pollMessage();
-		return result;
+	public void getDueBills(String x, String name) throws JsonProcessingException {	
+		MessageDueDays messageDueDays = new MessageDueDays(name.toLowerCase(), Integer.parseInt(x));
+		amazonSQSClient.sendMessage(mapper.writeValueAsString(messageDueDays));
 	}
+	
 
 
 }
